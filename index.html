@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Reactivity System Demo</title>
+</head>
+<body>
+  <div id="app"></div>
+    <p>Price: <input type="number" id="price" value="20" oninput="updatePrice(this.value)"></p>
+    <p>Quantity: <input type="number" id="quantity" value="5" oninput="updateQuantity(this.value)"></p>
+    <p>Total Price: <span id="totalPrice">100</span></p>
+  </div>
+
+  <script type="module">
+    import { reactive, watchEffect } from './reactivity-system.js'
+
+    let product = reactive({ price: 20, quantity: 5 })
+    let totalPrice
+
+    watchEffect(() => {
+      totalPrice = product.price * product.quantity
+      document.getElementById('totalPrice').textContent = totalPrice
+    })
+
+    function updatePrice(value) {
+      product.price = Number(value)
+    }
+
+    function updateQuantity(value) {
+      product.quantity = Number(value)
+    }
+
+    window.updatePrice = updatePrice
+    window.updateQuantity = updateQuantity
+  </script>
+</body>
+</html>
