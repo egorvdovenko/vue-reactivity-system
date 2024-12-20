@@ -4,23 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vue Reactivity System Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+    #app {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      background-color: #f9f9f9;
+    }
+    p {
+      margin: 10px 0;
+      display: grid;
+      grid-template-columns: 25% auto;
+      align-items: center;
+    }
+    input[type="number"] {
+      padding: 5px;
+    }
+    span {
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
     <p>Price: <input type="number" id="price" value="20" oninput="updatePrice(this.value)"></p>
     <p>Quantity: <input type="number" id="quantity" value="5" oninput="updateQuantity(this.value)"></p>
     <p>Total Price: <span id="totalPrice">100</span></p>
+    <p>Discount: <input type="number" id="discount" value="10" oninput="updateDiscount(this.value)"></p>
+    <p>Final Price: <span id="finalPrice">90</span></p>
   </div>
 
   <script type="module">
-    import { reactive, watchEffect } from './reactivity-system.js'
+    import { ref, reactive, watchEffect } from './reactivity-system.js'
 
     let product = reactive({ price: 20, quantity: 5 })
+    let discount = ref(10)
     let totalPrice
+    let finalPrice
 
     watchEffect(() => {
       totalPrice = product.price * product.quantity
       document.getElementById('totalPrice').textContent = totalPrice
+    })
+
+    watchEffect(() => {
+      finalPrice = totalPrice - discount.value
+      document.getElementById('finalPrice').textContent = finalPrice
     })
 
     function updatePrice(value) {
@@ -31,8 +71,13 @@
       product.quantity = Number(value)
     }
 
+    function updateDiscount(value) {
+      discount.value = Number(value)
+    }
+
     window.updatePrice = updatePrice
     window.updateQuantity = updateQuantity
+    window.updateDiscount = updateDiscount
   </script>
 </body>
 </html>
