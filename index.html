@@ -46,22 +46,29 @@
   </div>
 
   <script type="module">
-    import { ref, reactive, watchEffect } from './reactivity-system.js'
+    import { ref, reactive, computed, watchEffect } from './reactivity.js'
 
-    let product = reactive({ price: 20, quantity: 5 })
+    let product = reactive({ 
+      price: 20, 
+      quantity: 5 
+    })
+    
     let discount = ref(10)
-    let totalPrice
-    let finalPrice
 
+    let totalPrice = computed(() => {
+      return product.price * product.quantity
+    })
     watchEffect(() => {
-      totalPrice = product.price * product.quantity
-      document.getElementById('totalPrice').textContent = totalPrice
+      document.getElementById('totalPrice').textContent = totalPrice.value
     })
 
-    watchEffect(() => {
-      finalPrice = totalPrice - discount.value
-      document.getElementById('finalPrice').textContent = finalPrice
+    let finalPrice = computed(() => {
+      return totalPrice.value - discount.value
     })
+    watchEffect(() => {
+      document.getElementById('finalPrice').textContent = finalPrice.value
+    })
+
 
     function updatePrice(value) {
       product.price = Number(value)
